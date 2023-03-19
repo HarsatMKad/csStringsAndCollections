@@ -18,6 +18,7 @@ namespace ConsoleApp1
       WordList.Add("Wednesday");
       WordList.Add("my");
       WordList.Add("dudes");
+      WordList.Add("number");
     }
 
     public List<String> Converter(string Text)
@@ -41,45 +42,26 @@ namespace ConsoleApp1
       return TextList;
     }
 
-    public string PhoneNumberCorrector(string Text)
+    public List<String> PhoneNumberCorrector(List<String> TextList)
     {
-      int TextLength = Text.Length;
-      string NewText = "";
-      for (int LetterIndex = 0; LetterIndex < TextLength - 4; ++LetterIndex)
+      for(int WordIndex = 0; WordIndex < TextList.Count; ++WordIndex)
       {
-        if(Text[LetterIndex] == '(' && Text[LetterIndex + 4] == ')')
+        if (TextList[WordIndex][0] == '(' && TextList[WordIndex][4] == ')')
         {
-          NewText += "+7 ";
+          if (TextList[WordIndex][1] == '0')
+          {
+            TextList[WordIndex] = "+380 " + TextList[WordIndex][2] + TextList[WordIndex][3];
+          }
+          else
+          {
+            TextList[WordIndex] = "+380 " + TextList[WordIndex][1] + TextList[WordIndex][2] + TextList[WordIndex][3];
+          }
 
-          if(Text[LetterIndex + 1] != '0')
-          {
-            NewText += Text[LetterIndex + 1];
-          }
-          if(Text[LetterIndex + 1] != '0' || Text[LetterIndex + 2] != '0')
-          {
-            NewText += Text[LetterIndex + 2];
-          }
-          NewText += Text[LetterIndex + 3] + " ";
-
-          for(int LetterNumberIndex = LetterIndex + 6; LetterNumberIndex < LetterNumberIndex + 14 && LetterNumberIndex != TextLength; ++LetterNumberIndex)
-          {
-            if(Text[LetterNumberIndex] == '-')
-            {
-              NewText += ' ';
-            }
-            else
-            {
-              NewText += Text[LetterNumberIndex];
-            }
-          }
-          LetterIndex += 14;
-        }
-        else
-        {
-          NewText += Text[LetterIndex];
+          string NewNumber = TextList[WordIndex + 1].Replace('-', ' ');
+          TextList[WordIndex + 1] = NewNumber;
         }
       }
-      return NewText;
+      return TextList;
     }
 
     public string Corrector(string Word)
@@ -90,7 +72,7 @@ namespace ConsoleApp1
       {
         for (int LetterIndex = 0; LetterIndex < WordLength; ++LetterIndex)
         {
-          if(LetterIndex == SuspiciousLetter && LetterIndex < WordLength - 1)
+          if (LetterIndex == SuspiciousLetter && LetterIndex < WordLength - 1)
           {
             NewText += Word[LetterIndex + 1];
             NewText += Word[LetterIndex];
@@ -115,24 +97,23 @@ namespace ConsoleApp1
   {
     static void Main(string[] args)
     {
-      StreamReader sr = new StreamReader("text.txt");
-      string Text = sr.ReadLine();
+      StreamReader FileReader = new StreamReader("text.txt");
+      string Text = FileReader.ReadLine();
 
       Console.WriteLine("текст файла:");
       Console.WriteLine(Text);
 
-      Dictionary dictionary = new Dictionary();
-  
-      List<string> TextList = dictionary.Converter(Text);
+      Dictionary Dictionary = new Dictionary();
+      List<string> TextList = Dictionary.Converter(Text);
       string NewText = "";
+
+      TextList = Dictionary.PhoneNumberCorrector(TextList);
 
       for (int WordIndex = 0; WordIndex < TextList.Count; ++WordIndex)
       {
-        TextList[WordIndex] = dictionary.Corrector(TextList[WordIndex]);
+        TextList[WordIndex] = Dictionary.Corrector(TextList[WordIndex]);
         NewText += (TextList[WordIndex] + " ");
       }
- 
-      NewText = dictionary.PhoneNumberCorrector(NewText);
 
       Console.WriteLine("отредактированный файл:");
       Console.WriteLine(NewText);
