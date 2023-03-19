@@ -57,8 +57,7 @@ namespace ConsoleApp1
             TextList[WordIndex] = "+380 " + TextList[WordIndex][1] + TextList[WordIndex][2] + TextList[WordIndex][3];
           }
 
-          string NewNumber = TextList[WordIndex + 1].Replace('-', ' ');
-          TextList[WordIndex + 1] = NewNumber;
+          TextList[WordIndex + 1] = TextList[WordIndex + 1].Replace('-', ' ');
         }
       }
       return TextList;
